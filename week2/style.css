@@ -1,0 +1,338 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('');
+    background-size: cover;
+    background-color: #121212;
+    color: #fff;
+}
+
+/* Custom themed styling */
+h2 {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+}
+
+input {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid #00ff00;
+}
+
+button {
+    background-color: #00ff00;
+    color: black;
+}
+
+button:hover {
+    background-color: #fff;
+    color: #00ff00;
+}
+
+/* Make sure the video fills the whole screen */
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Style the content so it's readable over the video */
+.content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    padding: 20px;
+}
+
+/* Center the logo container */
+.logo-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    padding: 20px;
+}
+  
+/* Main logo text container */
+.logo {
+    text-align: center;
+    font-family: 'Pixelify Sans' , sans-serif;
+}
+  
+/* P3 part styling */
+.p3 {
+    font-size: 100px;
+    color: black;
+    font-family: 'Pixelify Sans', sans-serif;
+    letter-spacing: -10px;
+    display: block;
+    animation: pulse 2s infinite;
+}
+  
+/* PERSONA part styling */
+.persona3 {
+    font-size: 30px;
+    color: black;
+    margin-top: -5px;
+    font-family: 'Pixelify Sans', sans-serif;
+    letter-spacing: 3px;
+    display: block;
+}
+  
+/* RELOAD part styling */
+.reload {
+    font-size: 40px;
+    color: white;
+    font-family: 'Pixelify Sans', sans-serif;
+    background-color: #00A9E0;
+    padding: 0 15px;
+    letter-spacing: 2px;
+    margin-top: -5px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+/* Styling for the tarot card container */
+.tarot-card {
+    width: 100px;
+    height: auto;
+    background-color: #fff;
+    border: 5px solid #2c3e50;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    right: 48%;
+    top: 70%;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Card title styling */
+.card-title {
+    background-color: #2c3e50;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Tarot card image styling */
+.card-image {
+    background-image: url('world_arcana.jpg');
+    background-size: contain;
+    background-position: center;
+    height: 120px;
+    border-bottom: 3px solid #2c3e50;
+}
+
+/* Optional: Hover effect for the card */
+.tarot-card:hover {
+    transform: scale(1.05) rotate(360deg);
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Glowing line container for the logo */
+.glowing-line-container {
+    position: relative;
+    display: inline-block;
+    padding: 20px; /* İçeriye boşluk ekler */
+    border-radius: 15px; /* Kutu köşe yuvarlama */
+    background-color: rgba(0, 238, 255, 0.6); /* Arka plan rengi */
+    box-shadow: 0 0 30px rgba(7, 3, 243, 0.8); /* Neon ışık etkisi */
+}
+
+
+/* CSS Circles */
+.circle {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Diagonal line decoration */
+.diagonal-line {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.2) 50%);
+    top: 50%;
+    left: 0;
+}
+
+/* Floating time display */
+.time_div {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+/* Glassy container for the login form */
+.glass-container {
+    width: 300px;
+    height: 350px;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+
+.glass-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+.login-box {
+    max-width: 250px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h2 {
+    color: #fff;
+    margin-top: 30px;
+    margin-bottom: -20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+input {
+    padding: 10px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 13px;
+}
+
+input::placeholder {
+    color: #fff;
+}
+
+input:focus {
+    outline: none;
+}
+
+.options {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 12px;
+    color: white;
+}
+
+.options input {
+    margin-right: 5px;
+    margin-top: 0px;
+}
+
+.options a {
+    text-decoration: none;
+    color: white;
+    margin-left: auto;
+}
+
+button {
+    background: #fff;
+    color: black;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: transparent;
+    color: white;
+    outline: 1px solid #fff;
+}
+
+p {
+    font-size: 12px;
+    color: #fff;
+    margin-top: 15px;
+}
+
+#register {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
