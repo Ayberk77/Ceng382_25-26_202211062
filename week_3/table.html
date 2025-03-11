@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Information</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #007BFF;
+            background: black;
+            color: white;
+            border-radius: 5px;
+        }
+        input:focus, textarea:focus {
+            outline: 2px solid #007BFF;
+        }
+        button {
+            cursor: pointer;
+            background: #007BFF;
+            color: black;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: black;
+            transition: background-color 0.3s;
+        }
+        th, td {
+            border: 1px solid #007BFF;
+            padding: 10px;
+            text-align: center;
+        }
+        tr:hover {
+            background: rgba(0, 123, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Class Information</h2>
+        <form id="classForm">
+            <input type="text" id="className" placeholder="Class Name" required>
+            <input type="number" id="numPeople" placeholder="Number of People" required>
+            <textarea id="description" placeholder="Description" required></textarea>
+            <button type="submit">Add Class</button>
+        </form>
+        
+        <h2>Class Information Table</h2>
+        <table id="classTable">
+            <thead>
+                <tr>
+                    <th>Class Name</th>
+                    <th>Number of People</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById("classForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let className = document.getElementById("className").value;
+            let numPeople = document.getElementById("numPeople").value;
+            let description = document.getElementById("description").value;
+            
+            let table = document.getElementById("classTable").getElementsByTagName("tbody")[0];
+            let newRow = table.insertRow();
+            
+            newRow.innerHTML = `<td>${className}</td><td>${numPeople}</td><td>${description}</td>`;
+
+            
+            newRow.addEventListener("dblclick", function() {
+                this.remove();
+            });
+            
+            document.getElementById("classForm").reset();
+        });
+        
+        document.getElementById("classTable").addEventListener("click", function(event) {
+            if (event.target.tagName !== "TD") {
+                this.style.backgroundColor = this.style.backgroundColor === "black" ? "#0056b3" : "black";
+            }
+        });
+    </script>
+</body>
+</html>
