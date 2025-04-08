@@ -1,0 +1,71 @@
+﻿@page
+@model LabProject.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <input type="hidden" asp-for="FormModel.Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FormModel.ClassName" class="control-label"></label>
+                <input asp-for="FormModel.ClassName" class="form-control" />
+                <span asp-validation-for="FormModel.ClassName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FormModel.StudentCount" class="control-label"></label>
+                <input asp-for="FormModel.StudentCount" class="form-control" />
+                <span asp-validation-for="FormModel.StudentCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FormModel.Description" class="control-label"></label>
+                <input asp-for="FormModel.Description" class="form-control" />
+                <span asp-validation-for="FormModel.Description" class="text-danger"></span>
+            </div>
+            @if (Model.IsEdit)
+            {
+                <button type="submit" asp-page-handler="Update">Update Class</button>
+            }
+            else
+            {
+                <button type="submit" asp-page-handler="Add">Add Class</button>
+            }
+        </form>
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Class Name</th>
+                    <th>Student Count</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in IndexModel.Classes)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.ClassName</td>
+                        <td>@item.StudentCount</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" asp-page-handler="Edit">Edit</button>
+                            </form>
+                            <form method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" asp-page-handler="Delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
