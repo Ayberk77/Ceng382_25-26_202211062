@@ -9,6 +9,21 @@ namespace LabProject.Pages
 {
     public class IndexModel : PageModel
     {
+        [BindProperty(SupportsGet = true)]
+        public string? SearchName { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? MinStudents { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        private const int PageSize = 10;
+
+        public ClassInformationTable Table { get; set; } = new();
+
+        
+        
         // In-memory list of class data
         public static List<ClassInformationModel> Classes { get; set; } = new();
 
@@ -22,7 +37,51 @@ namespace LabProject.Pages
 
         public void OnGet()
         {
+            // 1) Test verisi üret (bir kerelik)
+            if (!Classes.Any())
+            {
+                var rnd = new Random();
+                for (int i = 1; i <= 100; i++)
+                {
+                    Classes.Add(new ClassInformationModel
+                    {
+                        Id = i,
+                        ClassName = $"Class {i}",
+                        StudentCount = rnd.Next(10, 45),
+                        Description = $"Sample description {i}"
+                    });
+                }
+            }
+
+            // 2) Filtrele
+            var query = Classes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(SearchName))
+                query = query.Where(c => c.ClassName.Contains(SearchName, StringComparison.OrdinalIgnoreCase));
+
+            if (MinStudents.HasValue)
+                query = query.Where(c => c.StudentCount >= MinStudents.Value);
+
+            // 3) Sayfalama
+            var totalCount = query.Count();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+
+            var pageData = query
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            // 4) Görünüme gönderilecek tablo modeli
+            Table = new ClassInformationTable
+            {
+                Items = pageData,
+                CurrentPage = PageNumber,
+                TotalPages = totalPages,
+                SearchName = SearchName,
+                MinStudents = MinStudents
+            };
         }
+
 
         public IActionResult OnPostAdd()
         {

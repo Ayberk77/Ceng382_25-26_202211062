@@ -33,39 +33,83 @@
                 <button type="submit" asp-page-handler="Add">Add Class</button>
             }
         </form>
+            <form method="get" class="row g-2 mb-3">
+                <div class="col">
+                    <input asp-for="SearchName" class="form-control" placeholder="Class name…" />
+                </div>
+                <div class="col">
+                    <input asp-for="MinStudents" class="form-control" placeholder="Min students" type="number" />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+        </form>
+
     </div>
     <div class="col-md-6">
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Class Name</th>
-                    <th>Student Count</th>
+                    <th>Student #</th>
                     <th>Description</th>
-                    <th>Actions</th>
+                    <th></th> <!-- Action buttons -->
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in IndexModel.Classes)
-                {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>@item.ClassName</td>
-                        <td>@item.StudentCount</td>
-                        <td>@item.Description</td>
-                        <td>
-                            <form method="post">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" asp-page-handler="Edit">Edit</button>
-                            </form>
-                            <form method="post">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" asp-page-handler="Delete">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
+        @foreach (var item in Model.Table.Items)
+        {
+                <tr>
+                    <td>@item.ClassName</td>
+                    <td>@item.StudentCount</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <button asp-page-handler="Edit"
+                                    class="btn btn-sm btn-warning">Edit</button>
+                            <button asp-page-handler="Delete"
+                                    class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+        }
             </tbody>
         </table>
+        @if (Model.Table.TotalPages > 1)
+        {
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item @(Model.Table.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                        asp-route-SearchName="@Model.Table.SearchName"
+                        asp-route-MinStudents="@Model.Table.MinStudents"
+                        asp-route-PageNumber="@(Model.Table.CurrentPage - 1)">
+                            « Prev
+                        </a>
+                    </li>
+
+        @for (int i = 1; i <= Model.Table.TotalPages; i++)
+        {
+                    <li class="page-item @(i == Model.Table.CurrentPage ? "active" : "")">
+                        <a class="page-link"
+                        asp-route-SearchName="@Model.Table.SearchName"
+                        asp-route-MinStudents="@Model.Table.MinStudents"
+                        asp-route-PageNumber="@i">@i</a>
+                    </li>
+        }
+
+                    <li class="page-item @(Model.Table.CurrentPage == Model.Table.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                        asp-route-SearchName="@Model.Table.SearchName"
+                        asp-route-MinStudents="@Model.Table.MinStudents"
+                        asp-route-PageNumber="@(Model.Table.CurrentPage + 1)">
+                            Next »
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+
     </div>
 </div>
