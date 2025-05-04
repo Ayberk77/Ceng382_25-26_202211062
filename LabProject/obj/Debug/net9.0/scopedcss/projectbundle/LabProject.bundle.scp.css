@@ -47,3 +47,15 @@ button.accept-policy[b-j6dvz5p2xa] {
   white-space: nowrap;
   line-height: 60px;
 }
+
+
+.selectable-header[b-j6dvz5p2xa] {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.selectable-header.selected[b-j6dvz5p2xa] {
+  background-color: #d0ebff;
+}
+
+

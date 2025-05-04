@@ -4,6 +4,7 @@ using LabProject.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using LabProject.Helpers;
 
 namespace LabProject.Pages
 {
@@ -21,6 +22,9 @@ namespace LabProject.Pages
         private const int PageSize = 10;
 
         public ClassInformationTable Table { get; set; } = new();
+
+        [BindProperty]
+        public List<string> SelectedColumns { get; set; } = new();
 
         
         
@@ -133,5 +137,32 @@ namespace LabProject.Pages
 
             return RedirectToPage();
         }
+
+        public IActionResult OnPostExportAll()
+        {
+            var json = Utils.Instance.ExportToJson(Classes, null);
+
+            return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "all_data.json");
+        }
+        
+        public IActionResult OnPostExportFiltered()
+        {
+            var query = Classes.AsQueryable();
+
+            // 🔎 Filtre uygulamaları
+            if (!string.IsNullOrWhiteSpace(SearchName))
+                query = query.Where(c => c.ClassName.Contains(SearchName, StringComparison.OrdinalIgnoreCase));
+
+            if (MinStudents.HasValue)
+                query = query.Where(c => c.StudentCount >= MinStudents.Value);
+
+            var filteredData = query.ToList();
+
+            // ✅ Sadece seçilen sütunlarla JSON üret
+            var json = Utils.Instance.ExportToJson(filteredData, SelectedColumns);
+
+            return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "filtered_data.json");
+        }
+
     }
 }

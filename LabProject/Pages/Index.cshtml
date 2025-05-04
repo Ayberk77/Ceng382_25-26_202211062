@@ -47,12 +47,27 @@
 
     </div>
     <div class="col-md-6">
+        <form method="post" id="exportForm">
+            <input type="hidden" name="SearchName" value="@Model.SearchName" />
+            <input type="hidden" name="MinStudents" value="@Model.MinStudents" />
+
+            <div style="display:none;">
+                <input type="checkbox" name="SelectedColumns" value="ClassName" id="cb-ClassName" />
+                <input type="checkbox" name="SelectedColumns" value="StudentCount" id="cb-StudentCount" />
+                <input type="checkbox" name="SelectedColumns" value="Description" id="cb-Description" />
+            </div>
+
+            <button type="submit" asp-page-handler="ExportAll">Export All</button>
+            <button type="submit" asp-page-handler="ExportFiltered">Export Filtered</button>
+        </form>
+
+
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Class Name</th>
-                    <th>Student #</th>
-                    <th>Description</th>
+                    <th data-column="ClassName" class="selectable-header">Class Name</th>
+                    <th data-column="StudentCount" class="selectable-header">Student #</th>
+                    <th data-column="Description" class="selectable-header">Description</th>
                     <th></th> <!-- Action buttons -->
                 </tr>
             </thead>
@@ -113,3 +128,28 @@
 
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.selectable-header').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = th.dataset.column;
+            const cb = document.getElementById("cb-" + col);
+            cb.checked = !cb.checked;
+
+            // Görsel seçili olup olmadığını kontrol et
+            th.classList.toggle("selected", cb.checked);
+        });
+    });
+</script>
+
+<style>
+    .selectable-header {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .selectable-header.selected {
+        background-color: #d0ebff;
+    }
+</style>
+

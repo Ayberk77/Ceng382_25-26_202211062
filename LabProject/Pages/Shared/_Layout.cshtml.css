@@ -46,3 +46,15 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+
+.selectable-header {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.selectable-header.selected {
+  background-color: #d0ebff;
+}
+
+
