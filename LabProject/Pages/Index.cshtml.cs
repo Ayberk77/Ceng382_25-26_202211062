@@ -41,6 +41,12 @@ namespace LabProject.Pages
 
         public void OnGet()
         {
+
+            if (!IsAuthenticated())
+            {
+                Response.Redirect("/Login");
+                return;
+            }
             // 1) Test verisi üret (bir kerelik)
             if (!Classes.Any())
             {
@@ -163,6 +169,23 @@ namespace LabProject.Pages
 
             return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "filtered_data.json");
         }
+
+        private bool IsAuthenticated()
+        {
+            var sessionUsername = HttpContext.Session.GetString("username");
+            var sessionToken = HttpContext.Session.GetString("token");
+            var sessionId = HttpContext.Session.GetString("session_id");
+
+            var cookieUsername = Request.Cookies["username"];
+            var cookieToken = Request.Cookies["token"];
+            var cookieSessionId = Request.Cookies["session_id"];
+
+            return sessionUsername != null &&
+                sessionUsername == cookieUsername &&
+                sessionToken == cookieToken &&
+                sessionId == cookieSessionId;
+        }
+
 
     }
 }

@@ -96,3 +96,4 @@ C:\Users\90553\Desktop\Ceng382_25-26_202211062\LabProject\obj\Debug\net9.0\compr
 C:\Users\90553\Desktop\Ceng382_25-26_202211062\LabProject\obj\Debug\net9.0\compressed\z6tk9114ht-9vr69e8ynj.gz
 C:\Users\90553\Desktop\Ceng382_25-26_202211062\LabProject\obj\Debug\net9.0\compressed\brn67k8lya-6nl3zvoiaw.gz
 C:\Users\90553\Desktop\Ceng382_25-26_202211062\LabProject\obj\Debug\net9.0\compressed\2whracil8j-6nl3zvoiaw.gz
+C:\Users\90553\Desktop\Ceng382_25-26_202211062\LabProject\obj\Debug\net9.0\compressed\avu68zfqrh-967jx1yz93.gz

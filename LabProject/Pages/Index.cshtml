@@ -4,6 +4,15 @@
     ViewData["Title"] = "Home page";
 }
 
+@if (HttpContext.Session.GetString("username") != null)
+{
+    <div style="text-align:right; margin-bottom: 10px;">
+        Welcome, <strong>@HttpContext.Session.GetString("username")</strong> |
+        <a href="/Logout">Logout</a>
+    </div>
+}
+
+
 <div class="row">
     <div class="col-md-6">
         <form method="post">
