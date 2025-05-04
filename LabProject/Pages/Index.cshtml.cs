@@ -5,11 +5,22 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using LabProject.Helpers;
+using Microsoft.EntityFrameworkCore;
+using LabProject.Data;
+
 
 namespace LabProject.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly SchoolDbContext _context;
+
+        public IndexModel(SchoolDbContext context)
+        {
+            _context = context;
+        }
+
+        
         [BindProperty(SupportsGet = true)]
         public string? SearchName { get; set; }
 
@@ -39,136 +50,159 @@ namespace LabProject.Pages
 
         public bool IsEdit { get; set; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-
             if (!IsAuthenticated())
             {
                 Response.Redirect("/Login");
                 return;
             }
-            // 1) Test verisi üret (bir kerelik)
-            if (!Classes.Any())
-            {
-                var rnd = new Random();
-                for (int i = 1; i <= 100; i++)
-                {
-                    Classes.Add(new ClassInformationModel
-                    {
-                        Id = i,
-                        ClassName = $"Class {i}",
-                        StudentCount = rnd.Next(10, 45),
-                        Description = $"Sample description {i}"
-                    });
-                }
-            }
 
-            // 2) Filtrele
-            var query = Classes.AsQueryable();
+            var query = _context.Classes.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(SearchName))
-                query = query.Where(c => c.ClassName.Contains(SearchName, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => c.Name.Contains(SearchName));
 
             if (MinStudents.HasValue)
-                query = query.Where(c => c.StudentCount >= MinStudents.Value);
+                query = query.Where(c => c.PersonCount >= MinStudents.Value);
 
-            // 3) Sayfalama
-            var totalCount = query.Count();
+            var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
 
-            var pageData = query
+            var pageData = await query
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
-                .ToList();
+                .ToListAsync();
 
-            // 4) Görünüme gönderilecek tablo modeli
             Table = new ClassInformationTable
             {
-                Items = pageData,
+                Items = pageData.Select(c => new ClassInformationModel
+                {
+                    Id = c.Id,
+                    ClassName = c.Name,
+                    StudentCount = c.PersonCount,
+                    Description = c.Description
+                }),
                 CurrentPage = PageNumber,
                 TotalPages = totalPages,
+
+
                 SearchName = SearchName,
                 MinStudents = MinStudents
             };
         }
 
 
-        public IActionResult OnPostAdd()
+
+        public async Task<IActionResult> OnPostAddAsync()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-            Classes.Add(FormModel);
-            FormModel = new(); // reset form
+            var newClass = new Class
+            {
+                Name = FormModel.ClassName,
+                PersonCount = FormModel.StudentCount,
+                Description = FormModel.Description,
+                IsActive = true
+            };
+
+            _context.Classes.Add(newClass);
+            await _context.SaveChangesAsync();
             return RedirectToPage();
         }
 
-        public IActionResult OnPostEdit()
+
+        public async Task<IActionResult> OnPostEditAsync()
         {
-            var existing = Classes.FirstOrDefault(c => c.Id == Id);
+            var existing = await _context.Classes.FindAsync(Id);
             if (existing != null)
             {
                 FormModel = new ClassInformationModel
                 {
                     Id = existing.Id,
-                    ClassName = existing.ClassName ?? "", 
-                    StudentCount = existing.StudentCount,
-                    Description = existing.Description ?? "" 
+                    ClassName = existing.Name,
+                    StudentCount = existing.PersonCount,
+                    Description = existing.Description
                 };
-                IsEdit = true;  // Ensure IsEdit is being set
+                IsEdit = true;
             }
 
             return Page();
         }
 
 
-        public IActionResult OnPostUpdate()
+
+        public async Task<IActionResult> OnPostUpdateAsync()
         {
-            var existing = Classes.FirstOrDefault(c => c.Id == FormModel.Id);
+            var existing = await _context.Classes.FindAsync(FormModel.Id);
             if (existing != null && ModelState.IsValid)
             {
-                existing.ClassName = FormModel.ClassName;
-                existing.StudentCount = FormModel.StudentCount;
+                existing.Name = FormModel.ClassName;
+                existing.PersonCount = FormModel.StudentCount;
                 existing.Description = FormModel.Description;
+
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage();
         }
 
-        public IActionResult OnPostDelete()
+
+        public async Task<IActionResult> OnPostDeleteAsync()
         {
-            var toDelete = Classes.FirstOrDefault(c => c.Id == Id);
+            var toDelete = await _context.Classes.FindAsync(Id);
             if (toDelete != null)
-                Classes.Remove(toDelete);
+            {
+                _context.Classes.Remove(toDelete);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToPage();
         }
 
-        public IActionResult OnPostExportAll()
+
+        public async Task<IActionResult> OnPostExportAllAsync()
         {
-            var json = Utils.Instance.ExportToJson(Classes, null);
+            var allData = await _context.Classes.ToListAsync();
+
+            var json = Utils.Instance.ExportToJson(allData.Select(c => new ClassInformationModel
+            {
+                Id = c.Id,
+                ClassName = c.Name,
+                StudentCount = c.PersonCount,
+                Description = c.Description
+            }));
 
             return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "all_data.json");
         }
-        
-        public IActionResult OnPostExportFiltered()
-        {
-            var query = Classes.AsQueryable();
 
-            // 🔎 Filtre uygulamaları
+        
+        public async Task<IActionResult> OnPostExportFilteredAsync()
+        {
+            var query = _context.Classes.AsQueryable();
+
             if (!string.IsNullOrWhiteSpace(SearchName))
-                query = query.Where(c => c.ClassName.Contains(SearchName, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => c.Name.Contains(SearchName));
 
             if (MinStudents.HasValue)
-                query = query.Where(c => c.StudentCount >= MinStudents.Value);
+                query = query.Where(c => c.PersonCount >= MinStudents.Value);
 
-            var filteredData = query.ToList();
+            var filteredData = await query.ToListAsync();
 
-            // ✅ Sadece seçilen sütunlarla JSON üret
-            var json = Utils.Instance.ExportToJson(filteredData, SelectedColumns);
+            var mapped = filteredData.Select(c => new ClassInformationModel
+            {
+                Id = c.Id,
+                ClassName = c.Name,
+                StudentCount = c.PersonCount,
+                Description = c.Description
+            });
+
+            var json = Utils.Instance.ExportToJson(mapped, SelectedColumns);
 
             return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "filtered_data.json");
         }
+
 
         private bool IsAuthenticated()
         {

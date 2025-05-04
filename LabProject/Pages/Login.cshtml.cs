@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LabProject.Models;
 using System.Text.Json;
+using LabProject.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace LabProject.Pages
 {
@@ -24,22 +27,17 @@ namespace LabProject.Pages
             return Page();
         }
 
+        private readonly SchoolDbContext _context;
+
+        public LoginModel(SchoolDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "users.json");
-            if (!System.IO.File.Exists(filePath))
-            {
-                ErrorMessage = "User Data can't be found";
-                return Page();
-            }
-
-            var json = await System.IO.File.ReadAllTextAsync(filePath);
-            var users = JsonSerializer.Deserialize<List<User>>(json);
-
-            var matchedUser = users?.FirstOrDefault(u => 
-                u.Username == Username && 
-                u.Password == Password && 
-                u.IsActive);
+            var matchedUser = await _context.Users.FirstOrDefaultAsync(u =>
+                u.Username == Username && u.Password == Password && u.IsActive);
 
             if (matchedUser == null)
             {
@@ -49,12 +47,10 @@ namespace LabProject.Pages
 
             var token = Guid.NewGuid().ToString();
 
-            // Session
             HttpContext.Session.SetString("username", matchedUser.Username);
             HttpContext.Session.SetString("token", token);
             HttpContext.Session.SetString("session_id", HttpContext.Session.Id);
 
-            // Cookie
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTime.UtcNow.AddMinutes(30),
@@ -69,5 +65,6 @@ namespace LabProject.Pages
 
             return RedirectToPage("Index");
         }
+
     }
 }
