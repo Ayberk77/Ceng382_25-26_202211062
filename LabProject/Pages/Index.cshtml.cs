@@ -58,7 +58,9 @@ namespace LabProject.Pages
                 return;
             }
 
-            var query = _context.Classes.AsQueryable();
+            var query = _context.Classes
+                        .Where(c => c.IsActive)
+                        .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(SearchName))
                 query = query.Where(c => c.Name.Contains(SearchName));
@@ -154,9 +156,10 @@ namespace LabProject.Pages
             var toDelete = await _context.Classes.FindAsync(Id);
             if (toDelete != null)
             {
-                _context.Classes.Remove(toDelete);
+                toDelete.IsActive = false;
                 await _context.SaveChangesAsync();
             }
+
 
             return RedirectToPage();
         }
